@@ -32,13 +32,3 @@ private:
 
     SkScalar fRotationAngle;
 };
-
-class TestApplication {
-public:
-    TestApplication();
-
-private:
-    const int fpsCap = 120;
-    SDL_Renderer *renderer = nullptr;
-    SDL_Window *window = nullptr;
-};

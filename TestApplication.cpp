@@ -54,6 +54,8 @@ void HelloWorld::updateTitle() {
         title.append("GL");
 #elif defined(SK_VULKAN)
         title.append("Vulkan");
+#elif defined(SK_METAL)
+        title.append("Metal");
 #elif defined(SK_DAWN)
         title.append("Dawn");
 #else
@@ -132,6 +134,8 @@ bool HelloWorld::onChar(SkUnichar c, skui::ModifierKey modifiers) {
             fBackendType = Window::kNativeGL_BackendType;
 #elif defined(SK_VULKAN)
             fBackendType = Window::kVulkan_BackendType;
+#elif defined(SK_METAL)
+            fBackendType = Window::kMetal_BackendType;
 #else
             SkDebugf("No GPU backend configured\n");
             return true;
@@ -143,80 +147,4 @@ bool HelloWorld::onChar(SkUnichar c, skui::ModifierKey modifiers) {
         fWindow->attach(fBackendType);
     }
     return true;
-}
-
-/////////////////////////////////////////////////////////////////
-
-TestApplication::TestApplication() {
-    SDL_Init(SDL_INIT_EVERYTHING);
-    Uint32 windowFlags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI;
-
-
-    SDL_Rect gScreenRect = { 0, 0, 1280, 720 };
-    //Get device display mode
-//    SDL_DisplayMode displayMode;
-//    if( SDL_GetCurrentDisplayMode( 0, &displayMode ) == 0 )
-//    {
-//        gScreenRect.w = displayMode.w;
-//        gScreenRect.h = displayMode.h;
-//    }
-
-    printf("Init size %d | %d\n ", gScreenRect.w, gScreenRect.h);
-    window = SDL_CreateWindow("Angle Test",
-                              SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                              gScreenRect.w, gScreenRect.h,
-                              windowFlags);
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
-
-    SkGraphics::Init();
-
-    bool closeRequired = false;
-    while (!closeRequired) {
-        static unsigned int a, b, delta;
-        a = SDL_GetTicks();
-        delta = a - b;
-
-        if (delta < 1000/fpsCap) continue;
-        b = a;
-
-        SDL_Event event;
-        SDL_PumpEvents();
-//        printf("Frame\n");
-        while (SDL_PollEvent(&event)) {
-            switch (event.type) {
-                case SDL_QUIT:
-                    // handling of close button
-                    closeRequired = true;
-                    break;
-                case SDL_KEYUP:
-                    if (event.key.keysym.sym == SDLK_F1) {
-//                        s_showStats = !s_showStats;
-                    }
-                    break;
-                case SDL_CONTROLLERBUTTONDOWN:
-                    switch (event.cbutton.button) {
-                        case SDL_CONTROLLER_BUTTON_START:
-                            closeRequired = true;
-                            break;
-                        case SDL_CONTROLLER_BUTTON_A:
-//                            s_showStats = !s_showStats;
-                            break;
-                    }
-                    break;
-            }
-        }
-
-
-        SDL_SetRenderDrawColor( renderer, 0x00, 0xFF, 0xFF, 0xFF );
-        SDL_RenderClear( renderer );
-//
-        SDL_RenderPresent( renderer );
-
-        // Handle window resize.
-//        update();
-    }
-
-    if (renderer) SDL_DestroyRenderer(renderer);
-    if (window) SDL_DestroyWindow(window);
-    SDL_Quit();
 }
