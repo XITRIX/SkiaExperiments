@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.25)
 project(SkiaTest)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -17,19 +17,19 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 #)
 
 add_executable(SkiaTest
-        main.cpp
-        SDLApplication.cpp
-        SDLApplication.hpp
-#        TestApplication.cpp
-#        TestApplication.hpp
-#        "${CMAKE_SOURCE_DIR}/Thirdparty/skia/tools/sk_app/CommandSet.cpp"
-#        "${CMAKE_SOURCE_DIR}/Thirdparty/skia/tools/sk_app/Window.cpp"
-#        "${CMAKE_SOURCE_DIR}/Thirdparty/skia/tools/sk_app/mac/main_mac.mm"
-#        "${CMAKE_SOURCE_DIR}/Thirdparty/skia/tools/sk_app/mac/Window_mac.mm"
+#        main.cpp
+#        SDLApplication.cpp
+#        SDLApplication.hpp
+        TestApplication.cpp
+        TestApplication.hpp
+        "${CMAKE_SOURCE_DIR}/Thirdparty/skia/tools/sk_app/CommandSet.cpp"
+        "${CMAKE_SOURCE_DIR}/Thirdparty/skia/tools/sk_app/Window.cpp"
+        "${CMAKE_SOURCE_DIR}/Thirdparty/skia/tools/sk_app/mac/main_mac.mm"
+        "${CMAKE_SOURCE_DIR}/Thirdparty/skia/tools/sk_app/mac/Window_mac.mm"
 
 )
 
-add_definitions(-DSK_GANESH -DSK_METAL -DSK_DEBUG -DSK_TRIVIAL_ABI=[[clang::trivial_abi]])
+add_definitions(-DSK_GANESH -DSK_GL -DSK_DEBUG -DSK_TRIVIAL_ABI=[[clang::trivial_abi]])
 #target_link_libraries(SkiaTest Skia)
 
 target_link_libraries(SkiaTest "${CMAKE_SOURCE_DIR}/Thirdparty/skia/out/AppleSilicon/libskia.a")

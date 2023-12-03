@@ -31,4 +31,5 @@ private:
     sk_app::Window::BackendType fBackendType;
 
     SkScalar fRotationAngle;
+    sk_sp<SkTypeface> typeface;
 };

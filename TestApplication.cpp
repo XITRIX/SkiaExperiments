@@ -34,6 +34,8 @@ HelloWorld::HelloWorld(int argc, char** argv, void* platformData)
     fWindow->pushLayer(this);
 
     fWindow->attach(fBackendType);
+
+    typeface = SkTypeface::MakeFromFile("res/SF-Compact.ttf");
 }
 
 HelloWorld::~HelloWorld() {
@@ -78,12 +80,20 @@ void HelloWorld::onPaint(SkSurface* surface) {
     // Clear background
     canvas->clear(SK_ColorWHITE);
 
+//    sk_sp<SkImageFilter> newBlurFilter = SkImageFilters::Blur(25, 25, SkTileMode::kClamp, nullptr);
+
     SkPaint paint;
     paint.setColor(SK_ColorRED);
+    paint.setAntiAlias(true);
+
+//    paint.setImageFilter(std::move(newBlurFilter));
 
     // Draw a rectangle with red paint
-    SkRect rect = SkRect::MakeXYWH(10, 10, 128, 128);
-    canvas->drawRect(rect, paint);
+    SkRect rect = SkRect::MakeXYWH(10, 10, 512, 200);
+    SkRRect rrect;
+    SkVector corners[] = {{24, 36}, {36, 24}, {24, 24}, {24, 24}};
+    rrect.setRectRadii(rect, corners);
+    canvas->drawRRect(rrect, paint);
 
     // Set up a linear gradient and draw a circle
     {
@@ -100,9 +110,10 @@ void HelloWorld::onPaint(SkSurface* surface) {
     }
 
     // Draw a message with a nice black paint
-    SkFont font;
+
+    SkFont font(typeface);
     font.setSubpixel(true);
-    font.setSize(20);
+    font.setSize(49);
     paint.setColor(SK_ColorBLACK);
 
     canvas->save();
@@ -117,8 +128,67 @@ void HelloWorld::onPaint(SkSurface* surface) {
     canvas->rotate(fRotationAngle);
 
     // Draw the text
-    canvas->drawSimpleText(message, strlen(message), SkTextEncoding::kUTF8, 0, 0, font, paint);
+    canvas->drawString(message, 200, 20, font, paint);
+//    canvas->drawSimpleText(message, strlen(message), SkTextEncoding::kUTF8, 0, 0, font, paint);
 
+    canvas->restore();
+
+//    const SkRect middle = SkRect::MakeXYWH(64, 64, 128, 128);
+//    // Use middle rectangle as clip mask
+//    canvas->clipRect(middle, true);
+//
+//    sk_sp<SkImageFilter> newBlurFilter = SkImageFilters::Blur(25, 25, SkTileMode::kClamp, nullptr);
+//    paint.setImageFilter(newBlurFilter);
+//
+//    SkCanvas::SaveLayerRec slr(&middle, &paint, SkCanvas::kInitWithPrevious_SaveLayerFlag);
+//    canvas->saveLayer(slr);
+//
+//    // Fill the clip middle rectangle with a transparent white
+//    canvas->drawColor(0x40FFFFFF);
+//    canvas->restore();
+
+    SkPaint p;
+    p.setAntiAlias(true);
+    p.setStyle(SkPaint::kFill_Style);
+    p.setStrokeWidth(10);
+
+//    // Draw red squares
+//    p.setColor(SK_ColorRED);
+//    const SkRect red = SkRect::MakeXYWH(0, 0, 128, 128);
+//    canvas->drawRect(red, p);
+//    const SkRect red2 = SkRect::MakeXYWH(128, 128, 128, 128);
+//    canvas->drawRect(red2, p);
+//
+//    // Draw blue squares
+//    p.setColor(SK_ColorBLUE);
+////    p.setAlphaf(0.5f);
+//    const SkRect blue = SkRect::MakeXYWH(128, 0, 128, 128);
+//    canvas->drawRect(blue, p);
+//    const SkRect blue2 = SkRect::MakeXYWH(0, 128, 128, 128);
+//    canvas->drawRect(blue2, p);
+
+    // Create middle overlay rectangle for background blur
+    const SkRect middle = SkRect::MakeXYWH(64, 64, 128, 128);
+
+    canvas->save();
+    // Use middle rectangle as clip mask
+    canvas->clipRect(middle, true);
+
+    // Two blur filters, one that we're currently using and the newer one in current version of Skia.
+    // Both blur filters select a tile mode for clamping the blur filter at the rectangle's edges.
+    // However, the result on the CPU does NOT appear to clamp at all, while the result on GPU does!
+//    sk_sp<SkImageFilter> oldBlurFilter = SkBlurImageFilter::Make(25, 25, nullptr, nullptr, SkBlurImageFilter::kClamp_TileMode);
+    sk_sp<SkImageFilter> newBlurFilter = SkImageFilters::Blur(25, 25, SkTileMode::kClamp, nullptr);
+
+    p.setImageFilter(std::move(newBlurFilter));
+
+    // Make a separate layer using the blur filter, clipped to the middle rectangle's bounds
+    SkCanvas::SaveLayerRec slr(&middle, &p, SkCanvas::kInitWithPrevious_SaveLayerFlag);
+    canvas->saveLayer(slr);
+
+    // Fill the clip middle rectangle with a transparent white
+    canvas->drawColor(0x40FFFFFF);
+    canvas->restore();
     canvas->restore();
 }
 
