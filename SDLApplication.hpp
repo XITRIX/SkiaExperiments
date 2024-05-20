@@ -17,6 +17,10 @@ private:
     SDL_Window *window = nullptr;
     sk_sp<GrDirectContext> ctx;
 
+    SkScalar fRotationAngle = 0;
+    sk_sp<SkFontMgr> mgr;
+    sk_sp<SkTypeface> typeface;
+
     static TestApplication* shared;
 
     static int resizingEventWatcher(void* data, SDL_Event* event);

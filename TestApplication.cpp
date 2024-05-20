@@ -15,7 +15,9 @@ Application* Application::Create(int argc, char** argv, void* platformData) {
 }
 
 HelloWorld::HelloWorld(int argc, char** argv, void* platformData)
-#if defined(SK_GL)
+#if defined(SK_ANGLE)
+: fBackendType(Window::kANGLE_BackendType),
+#elif defined(SK_GL)
 : fBackendType(Window::kNativeGL_BackendType),
 #elif defined(SK_VULKAN)
 : fBackendType(Window::kVulkan_BackendType),
@@ -52,7 +54,9 @@ void HelloWorld::updateTitle() {
     if (Window::kRaster_BackendType == fBackendType) {
         title.append("Raster");
     } else {
-#if defined(SK_GL)
+#if defined(SK_ANGLE)
+        title.append("Angle");
+#elif defined(SK_GL)
         title.append("GL");
 #elif defined(SK_VULKAN)
         title.append("Vulkan");
@@ -200,7 +204,9 @@ void HelloWorld::onIdle() {
 bool HelloWorld::onChar(SkUnichar c, skui::ModifierKey modifiers) {
     if (' ' == c) {
         if (Window::kRaster_BackendType == fBackendType) {
-#if defined(SK_GL)
+#if defined(SK_ANGLE)
+            fBackendType = Window::kANGLE_BackendType;
+#elif defined(SK_GL)
             fBackendType = Window::kNativeGL_BackendType;
 #elif defined(SK_VULKAN)
             fBackendType = Window::kVulkan_BackendType;

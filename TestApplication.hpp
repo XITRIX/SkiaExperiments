@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <SDL.h>
+//#include <SDL.h>
 
 #include <skia.h>
 #include "tools/sk_app/Application.h"

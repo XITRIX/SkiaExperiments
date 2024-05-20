@@ -5,7 +5,9 @@
 #include "tools/sk_app/Window.h"
 #include "tools/skui/ModifierKey.h"
 
-int main() {
+#include <SDL_main.h>
+
+int main(int argc, char* argv[]) {
     TestApplication app;
     return 0;
 }
